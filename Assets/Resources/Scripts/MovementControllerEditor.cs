@@ -87,6 +87,19 @@ public class MovementControllerEditor : Editor
 
             bool initialEnabledSetting = GUI.enabled;   //Save the current state of the UI, it could be already disabled
 
+            GUI.enabled = (i >= 0) && initialEnabledSetting && GetWaypointAt(i) != null;
+            if (GUILayout.Button("D", GUILayout.Width(20f)))
+                //i += 1;
+            wpArrayCount.intValue++;
+            SetWaypoint(i, GetWaypointAt(i));
+
+
+           
+
+
+
+            // AddWaypoint(result);
+
             GUI.enabled = (i > 0) && initialEnabledSetting;
             if (GUILayout.Button("^", GUILayout.Width(20f)))
                 Swap(i, i - 1);
@@ -102,6 +115,20 @@ public class MovementControllerEditor : Editor
 
             GUILayout.EndHorizontal();                  //Ends the horizontal line called earlier
         }
+
+       
+
+        if (GUILayout.Button("Remove All Null"))
+        {
+
+            for (int i = 0; i < wpArrayCount.intValue; i++)
+            {         
+                if (GetWaypointAt(i) == null)
+                    RemoveWaypointAtIndex(i);
+            }
+        }
+      
+
         DropAreaGUI();
 
         movementCntrl.ApplyModifiedProperties();        //Save all changes, should usaully be placed last line at the end
