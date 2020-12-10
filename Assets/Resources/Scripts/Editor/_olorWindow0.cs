@@ -19,13 +19,14 @@ public class ColorWindow : EditorWindow
     private int width = 8;
     private int height = 8;
     float randomnessInColour;
-    float randomColour;
+    float randomColourFloat;
     Texture colorTexture;
     Renderer textureTarget;
 
     Color selectedColor = Color.white;
     Color eraseColor = Color.white;
     Color tempSelectedColour;
+    Color floodFildColor;
 
 
     public void OnEnable()
@@ -55,8 +56,9 @@ public class ColorWindow : EditorWindow
         GUILayout.Label("ToolBar", EditorStyles.largeLabel);                            //A label that says "Toolbar"
         selectedColor = EditorGUILayout.ColorField("Paint Color", selectedColor);       //Make a color field with the text "Paint Color" and have it fill the selectedColor var
         eraseColor = EditorGUILayout.ColorField("Erase Color", eraseColor);             //Make a color field with the text "Erase Color"
+        floodFildColor = EditorGUILayout.ColorField("Flood Fild Color ", floodFildColor);
 
-       
+
 
         if (GUILayout.Button("Fill All"))                                               //A button, if pressed, returns true
             colors = colors.Select(c => c = selectedColor).ToArray();                   //Linq expresion, for every color in the color array, sets it to the selected color
@@ -88,6 +90,41 @@ public class ColorWindow : EditorWindow
         GUILayout.EndVertical();                                                        //end vertical section
     }
 
+
+    private void FloodFildNewColour(int i, int j, Color previousColor)
+    {
+        int CurrentIndex = j + i * height;
+
+        if (i<0 || i>= width || j<0 || j>= height)
+        {
+            return;                //Safty Check
+        }
+
+        if (colors[CurrentIndex].Equals(floodFildColor))
+        {
+            return;    // if same color no need to change
+        }
+
+        if (!colors[CurrentIndex].Equals(floodFildColor))
+        {
+
+            return;
+
+        }
+
+        FloodFildNewColour(i = 1, j, previousColor);
+        FloodFildNewColour(i - 1, j, previousColor);
+        FloodFildNewColour(i, j + 1, previousColor);
+        FloodFildNewColour(i, j - 1, previousColor);
+
+        
+
+
+
+
+
+    }
+
     void DoCanvas()
     {
         Event evt = Event.current;                     //Grab the current event
@@ -101,14 +138,14 @@ public class ColorWindow : EditorWindow
             {
                 int index = j + i * height;           //Rememeber, this is just like a 2D array, but in 1D
                 Rect colorRect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true)); //Reserve a square, which will autofit to the size given
-                if ((evt.type == EventType.MouseDown || evt.type == EventType.MouseDrag) && colorRect.Contains(evt.mousePosition)) //Can now paint while dragging update
+                if ((/*evt.type == EventType.MouseDown ||*/ evt.type == EventType.MouseDrag) && colorRect.Contains(evt.mousePosition)) //Can now paint while dragging update
                 {
                     tempSelectedColour = selectedColor;
-                    randomColour = Random.Range(-randomnessInColour, randomnessInColour);
-                    randomColour = Mathf.Clamp(randomColour, -0.5f, 0.5f);
-                    selectedColor.r = selectedColor.r + randomColour;
-                    selectedColor.g = selectedColor.g + randomColour;
-                    selectedColor.b = selectedColor.b + randomColour;
+                    randomColourFloat = Random.Range(-randomnessInColour, randomnessInColour);
+                    randomColourFloat = Mathf.Clamp(randomColourFloat, -0.5f, 0.5f);
+                    selectedColor.r = selectedColor.r + randomColourFloat;
+                    selectedColor.g = selectedColor.g + randomColourFloat;
+                    selectedColor.b = selectedColor.b + randomColourFloat;
 
                     if (evt.button == 0)                //If mouse button pressed is left
                     {
@@ -119,6 +156,7 @@ public class ColorWindow : EditorWindow
                         colors[index] = eraseColor;   //Set the color of the index
                     evt.Use();                        //The event was consumed, if you try to use event after this, it will be non-sensical
                 }
+
 
                 GUI.color = colors[index];            //Same as a 2D array
                 GUI.DrawTexture(colorRect, colorTexture); //This is colored by GUI.Color!!!

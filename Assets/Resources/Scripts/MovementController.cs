@@ -28,7 +28,7 @@ public class MovementController : MonoBehaviour
             {
                 transform.position = Vector3.MoveTowards(transform.position, waypoints[currentWaypointIndex].position, speed * Time.deltaTime);
                 transform.rotation = Quaternion.LookRotation(waypoints[currentWaypointIndex].position - transform.position);
-                Debug.Log("rot: " + transform.rotation);
+               // Debug.Log("rot: " + transform.rotation);
             }
         }
     }

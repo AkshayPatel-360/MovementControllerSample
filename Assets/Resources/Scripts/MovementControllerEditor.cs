@@ -87,14 +87,33 @@ public class MovementControllerEditor : Editor
 
             bool initialEnabledSetting = GUI.enabled;   //Save the current state of the UI, it could be already disabled
 
-            GUI.enabled = (i >= 0) && initialEnabledSetting && GetWaypointAt(i) != null;
+            GUI.enabled =  initialEnabledSetting && GetWaypointAt(i) != null;
+
             if (GUILayout.Button("D", GUILayout.Width(20f)))
-                //i += 1;
-            wpArrayCount.intValue++;
-            SetWaypoint(i, GetWaypointAt(i));
+
+            {
+
+                AddWaypoint(GetWaypointAt(i));
+                //SetWaypoint(i, GetWaypointAt(i));
 
 
-           
+                for (int j = wpArrayCount.intValue - 1; j > i; j--)
+                {
+
+                    Swap(j, j - 1);
+
+                }
+
+
+            }
+
+
+
+
+
+
+
+
 
 
 
@@ -182,8 +201,15 @@ public class MovementControllerEditor : Editor
             Handles.color = Color.white;                                                                    //Set the color of all 
             for (int i = 0; i < mc.waypoints.Length - 1; i++)                                               //Length minus one, because the last one doesnt have a "next"
                 if (mc.waypoints[i] && mc.waypoints[i + 1])
-                    Handles.DrawLine(mc.waypoints[i].position, mc.waypoints[i + 1].position);                   //Draw a line from i to i+1
-            Handles.DrawLine(mc.waypoints[mc.waypoints.Length - 1].position, mc.waypoints[0].position);     //Draw line from last element back to first element
+                    Handles.DrawLine(mc.waypoints[i].position, mc.waypoints[i + 1].position);
+            //Draw a line from i to i+1
+
+            if (mc.waypoints[0] != null && mc.waypoints[mc.waypoints.Length - 1] != null)
+            {
+                Handles.DrawLine(mc.waypoints[mc.waypoints.Length - 1].position, mc.waypoints[0].position);
+            }
+           
+               //Draw line from last element back to first element
             Handles.color = originalHandleColor;                                                            //Reset the handle back to the original!
         }
 
