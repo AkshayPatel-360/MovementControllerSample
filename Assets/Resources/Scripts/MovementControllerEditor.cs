@@ -108,15 +108,6 @@ public class MovementControllerEditor : Editor
             }
 
 
-
-
-
-
-
-
-
-
-
             // AddWaypoint(result);
 
             GUI.enabled = (i > 0) && initialEnabledSetting;
